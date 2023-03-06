@@ -18,6 +18,7 @@ async function run() {
         const petCollection = client.db('ArtificialPets').collection('petsList');
         const allPetCollection = client.db('ArtificialPets').collection('allPets');
         const bookingCollection = client.db('ArtificialPets').collection('booking');
+        const userCollection = client.db('ArtificialPets').collection('users');
 
         // pets list create
         app.get('/pets', async (req, res) => {
@@ -47,6 +48,13 @@ async function run() {
             const query = { userEmail: email };
             const bookings = await bookingCollection.find(query).toArray();
             res.send(bookings)
+        });
+
+        // user data create
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await userCollection.insertOne(user);
+            res.send(result)
         });
 
     }

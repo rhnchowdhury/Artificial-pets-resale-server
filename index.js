@@ -136,6 +136,14 @@ async function run() {
             res.send(products);
         });
 
+        // delete addProducts
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const result = await addCollection.deleteOne(filter);
+            res.send(result);
+        })
+
         // jwt token create
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;

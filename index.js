@@ -123,11 +123,17 @@ async function run() {
             res.send(options);
         });
 
-        // create add products
+        // create addProducts
         app.post('/products', async (req, res) => {
             const products = req.body;
             const result = await addCollection.insertOne(products);
             res.send(result)
+        });
+        // get addProducts
+        app.get('/products', async (req, res) => {
+            const query = {};
+            const products = await addCollection.find(query).toArray();
+            res.send(products);
         });
 
         // jwt token create

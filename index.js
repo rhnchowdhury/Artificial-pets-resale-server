@@ -86,15 +86,15 @@ async function run() {
         });
 
         // create admin
-        app.put('/users/admin/:id', async (req, res) => {
+        app.put('/users/admin/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
-            // const decodedEmail = req.decoded.email;
-            // const query = { email: decodedEmail };
-            // const user = await userCollection.findOne(query);
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await userCollection.findOne(query);
 
-            // if (user?.role !== 'admin') {
-            //     return res.status(403).send({ message: 'forbidden access' })
-            // }
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
 
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
@@ -105,6 +105,14 @@ async function run() {
             }
             const result = await userCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
+        });
+
+        // admin check
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
         });
 
         // jwt token create

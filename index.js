@@ -36,6 +36,7 @@ async function run() {
         const allPetCollection = client.db('ArtificialPets').collection('allPets');
         const bookingCollection = client.db('ArtificialPets').collection('booking');
         const userCollection = client.db('ArtificialPets').collection('users');
+        const addCollection = client.db('ArtificialPets').collection('addProducts');
 
         // pets list create
         app.get('/pets', async (req, res) => {
@@ -71,7 +72,7 @@ async function run() {
             res.send(bookings)
         });
 
-        // user data create
+        // sign up user data create
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await userCollection.insertOne(user);
@@ -120,6 +121,13 @@ async function run() {
             const query = {};
             const options = await petCollection.find(query).project({ name: 1 }).toArray();
             res.send(options);
+        });
+
+        // create add products
+        app.post('/products', async (req, res) => {
+            const products = req.body;
+            const result = await addCollection.insertOne(products);
+            res.send(result)
         });
 
         // jwt token create

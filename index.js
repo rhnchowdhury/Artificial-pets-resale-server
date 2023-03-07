@@ -38,6 +38,18 @@ async function run() {
         const userCollection = client.db('ArtificialPets').collection('users');
         const addCollection = client.db('ArtificialPets').collection('addProducts');
 
+        // make sure we use verifyAdmin after verifyJWT
+        const verifyAdmin = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await userCollection.findOne(query);
+
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next()
+        };
+
         // pets list create
         app.get('/pets', async (req, res) => {
             const query = {};
@@ -87,16 +99,8 @@ async function run() {
         });
 
         // create admin
-        app.put('/users/admin/:id', verifyJWT, async (req, res) => {
+        app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail };
-            const user = await userCollection.findOne(query);
-
-            if (user?.role !== 'admin') {
-                return res.status(403).send({ message: 'forbidden access' })
-            }
-
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
             const updatedDoc = {
@@ -131,7 +135,12 @@ async function run() {
         });
         // get addProducts
         app.get('/products', async (req, res) => {
-            const query = {};
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
             const products = await addCollection.find(query).toArray();
             res.send(products);
         });

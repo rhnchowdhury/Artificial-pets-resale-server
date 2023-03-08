@@ -133,14 +133,10 @@ async function run() {
             const result = await addCollection.insertOne(products);
             res.send(result)
         });
+
         // get addProducts
-        app.get('/products', async (req, res) => {
-            let query = {};
-            if (req.query.email) {
-                query = {
-                    email: req.query.email
-                }
-            }
+        app.get('/products', verifyJWT, async (req, res) => {
+            const query = {};
             const products = await addCollection.find(query).toArray();
             res.send(products);
         });

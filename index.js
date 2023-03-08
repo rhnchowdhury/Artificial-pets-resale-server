@@ -84,6 +84,14 @@ async function run() {
             res.send(bookings)
         });
 
+        // get booking data by ID for payment options
+        app.get('/booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const pay = await bookingCollection.findOne(query);
+            res.send(pay);
+        })
+
         // sign up user data create
         app.post('/users', async (req, res) => {
             const user = req.body;

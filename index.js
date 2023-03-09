@@ -135,8 +135,16 @@ async function run() {
             const email = req.params.email;
             const query = { email };
             const seller = await userCollection.findOne(query);
-            res.send({ isSeller: seller?.role === 'true' });
-        })
+            res.send({ isSeller: seller?.role === true });
+        });
+
+        // buyer check
+        app.get('/users/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const buyer = await userCollection.findOne(query);
+            res.send({ isBuyer: buyer?.role === false });
+        });
 
         // category pets name for add products page
         app.get('/petsName', async (req, res) => {

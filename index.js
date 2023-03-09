@@ -87,12 +87,12 @@ async function run() {
         });
 
         // get booking data by ID for payment options
-        app.get('/booking/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) };
-            const pay = await bookingCollection.findOne(query);
-            res.send(pay);
-        })
+        // app.get('/booking/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: new ObjectId(id) };
+        //     const pay = await bookingCollection.findOne(query);
+        //     res.send(pay);
+        // })
 
         // sign up user data create
         app.post('/users', async (req, res) => {
@@ -130,6 +130,14 @@ async function run() {
             res.send({ isAdmin: user?.role === 'admin' });
         });
 
+        // seller check
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const seller = await userCollection.findOne(query);
+            res.send({ isSeller: seller?.role === 'true' });
+        })
+
         // category pets name for add products page
         app.get('/petsName', async (req, res) => {
             const query = {};
@@ -160,22 +168,22 @@ async function run() {
         });
 
         // payment create
-        app.post("/create-payment-intent", async (req, res) => {
-            const orders = req.body;
-            const price = orders.price;
-            const amount = price * 100;
+        // app.post("/create-payment-intent", async (req, res) => {
+        //     const orders = req.body;
+        //     const price = orders.petsPrice;
+        //     const amount = price * 100;
 
-            const paymentIntent = await stripe.paymentIntents.create({
-                currency: 'usd',
-                amount: amount,
-                "payment_method_types": [
-                    "card"
-                ]
-            });
-            res.send({
-                clientSecret: paymentIntent.client_secret,
-            })
-        });
+        //     const paymentIntent = await stripe.paymentIntents.create({
+        //         currency: 'usd',
+        //         amount: amount,
+        //         "payment_method_types": [
+        //             "card"
+        //         ]
+        //     });
+        //     res.send({
+        //         clientSecret: paymentIntent.client_secret,
+        //     })
+        // });
 
         // jwt token create
         app.get('/jwt', async (req, res) => {
